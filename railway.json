@@ -1,0 +1,58 @@
+{
+  "name": "glonghui-analysis",
+  "services": [
+    {
+      "name": "backend",
+      "source": "backend/",
+      "env": {
+        "PYTHON_VERSION": "3.11",
+        "DATABASE_URL": {
+          "fromService": {
+            "service": "database",
+            "property": "connectionString"
+          }
+        }
+      },
+      "startCommand": "python main.py",
+      "healthcheck": {
+        "path": "/",
+        "interval": 60,
+        "timeout": 30,
+        "retries": 3,
+        "gracePeriod": 10
+      }
+    },
+    {
+      "name": "frontend",
+      "source": "frontend/",
+      "env": {
+        "VITE_API_URL": {
+          "fromService": {
+            "service": "backend",
+            "property": "publicUrl"
+          }
+        }
+      },
+      "startCommand": "npm run build && npm run preview",
+      "healthcheck": {
+        "path": "/",
+        "interval": 60,
+        "timeout": 30,
+        "retries": 3,
+        "gracePeriod": 10
+      }
+    },
+    {
+      "name": "database",
+      "source": "database/",
+      "type": "postgres",
+      "env": {
+        "POSTGRES_DB": "glonghui_analysis",
+        "POSTGRES_USER": "postgres",
+        "POSTGRES_PASSWORD": {
+          "fromSecret": "DB_PASSWORD"
+        }
+      }
+    }
+  ]
+}

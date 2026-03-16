@@ -1,0 +1,43 @@
+{
+  "name": "glonghui-analysis-dashboard",
+  "version": "1.0.0",
+  "description": "Dashboard for 格隆汇 Live Streaming Analysis",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.11",
+    "@mui/material": "^5.14.13",
+    "@mui/x-charts": "^6.18.3",
+    "axios": "^1.6.2",
+    "chart.js": "^4.4.1",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "date-fns": "^2.30.0",
+    "react": "^18.2.0",
+    "react-chartjs-2": "^5.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.17.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.37",
+    "@types/react-dom": "^18.2.15",
+    "@types/react-router-dom": "^5.3.3",
+    "@vitejs/plugin-react": "^4.1.1",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.0"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "live-streaming",
+    "analysis",
+    "dashboard",
+    "hashtag-analysis",
+    "trending-topics"
+  ],
+  "author": "Your Name",
+  "license": "MIT"
+}
