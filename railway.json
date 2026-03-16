@@ -1,58 +1,77 @@
 {
-  "name": "glonghui-analysis",
+  "name": "glonghui-news-scraper",
   "services": [
     {
-      "name": "backend",
-      "source": "backend/",
+      "name": "scraper",
+      "source": "./scraper",
       "env": {
-        "PYTHON_VERSION": "3.11",
         "DATABASE_URL": {
           "fromService": {
             "service": "database",
-            "property": "connectionString"
+            "property": "url"
           }
-        }
+        },
+        "SCRAPING_INTERVAL_MINUTES": "1",
+        "LOG_LEVEL": "INFO",
+        "API_BASE_URL": "https://www.gelonghui.com",
+        "USER_AGENT": "Mozilla/5.0 (compatible; GelonghuiScraper/1.0)"
       },
-      "startCommand": "python main.py",
+      "command": "python -m scraper.scheduler",
       "healthcheck": {
-        "path": "/",
-        "interval": 60,
-        "timeout": 30,
-        "retries": 3,
-        "gracePeriod": 10
+        "path": "/health",
+        "interval": 30,
+        "timeout": 10,
+        "retries": 3
       }
     },
     {
-      "name": "frontend",
-      "source": "frontend/",
+      "name": "web-ui",
+      "source": "./web_ui",
       "env": {
-        "VITE_API_URL": {
+        "DATABASE_URL": {
           "fromService": {
-            "service": "backend",
-            "property": "publicUrl"
+            "service": "database",
+            "property": "url"
           }
-        }
+        },
+        "STREAMLIT_SERVER_PORT": "8501",
+        "STREAMLIT_SERVER_HEADLESS": "true",
+        "STREAMLIT_SERVER_ENABLE_CORS": "false",
+        "STREAMLIT_SERVER_ENABLE_XSRF": "false"
       },
-      "startCommand": "npm run build && npm run preview",
+      "command": "streamlit run web_ui/app.py --server.port 8501 --server.headless true",
       "healthcheck": {
-        "path": "/",
-        "interval": 60,
-        "timeout": 30,
-        "retries": 3,
-        "gracePeriod": 10
+        "path": "/_stcore/health",
+        "interval": 30,
+        "timeout": 10,
+        "retries": 3
       }
     },
     {
       "name": "database",
-      "source": "database/",
-      "type": "postgres",
+      "source": {
+        "type": "add-on",
+        "addonType": "postgresql"
+      },
       "env": {
-        "POSTGRES_DB": "glonghui_analysis",
-        "POSTGRES_USER": "postgres",
-        "POSTGRES_PASSWORD": {
+        "PGDATABASE": "news_scraper_db",
+        "PGUSER": "scraper_user",
+        "PGPASSWORD": {
           "fromSecret": "DB_PASSWORD"
         }
       }
+    }
+  ],
+  "secrets": [
+    {
+      "name": "DB_PASSWORD",
+      "value": "secure_password_123"
+    }
+  ],
+  "domains": [
+    {
+      "service": "web-ui",
+      "domain": "glonghui-news-dashboard.railway.app"
     }
   ]
 }

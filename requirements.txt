@@ -1,0 +1,36 @@
+# Core dependencies for Gelonghui News Scraper
+
+# Web scraping and HTTP
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+
+# Database and ORM
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0  # PostgreSQL driver
+
+# Scheduling
+apscheduler>=3.10.0
+
+# Data processing and analysis
+pandas>=2.0.0
+numpy>=1.24.0
+
+# Web UI
+streamlit>=1.28.0
+plotly>=5.17.0
+
+# Utilities
+python-dotenv>=1.0.0
+python-dateutil>=2.8.0
+
+# Development and testing (optional)
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+
+# Production deployment
+gunicorn>=21.0.0
+uvicorn[standard]>=0.24.0
+
+# Additional utilities
+aiohttp>=3.8.0
+asyncio>=3.4.3

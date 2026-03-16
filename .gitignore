@@ -39,66 +39,66 @@ venv.bak/
 
 # OS
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # Logs
 *.log
 logs/
+*.log.*
 
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
+# Database
+*.db
+*.sqlite
+*.sqlite3
 
-# Coverage directory used by tools like istanbul
-coverage/
+# Temporary files
+*.tmp
+*.temp
+.tmp/
+.temp/
 
-# nyc test coverage
-.nyc_output
+# Streamlit
+.streamlit/
+secrets.toml
 
-# Dependency directories
-node_modules/
-jspm_packages/
-
-# Optional npm cache directory
-.npm
-
-# Optional REPL history
-.node_repl_history
-
-# Output of 'npm pack'
-*.tgz
-
-# Yarn Integrity file
-.yarn-integrity
-
-# dotenv environment variables file
-.env
-
-# next.js build output
-.next
-
-# nuxt.js build output
-.nuxt
-
-# vuepress build output
-.vuepress/dist
-
-# Serverless directories
-.serverless
-
-# FuseBox cache
-.fusebox/
-
-# DynamoDB Local files
-.dynamodb/
-
-# TernJS port file
-.tern-port
-
-# Stores VSCode versions used for testing VSCode extensions
-.vscode-test
+# Docker
+.dockerignore
+.docker/
 
 # Railway
 .railway/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.nox/
+
+# Documentation
+docs/_build/
+docs/build/
+
+# Application specific
+scraper.log
+test_*.db
+*.csv
+*.json
+*.xml
+
+# Secrets and credentials
+.env.local
+.env.production
+.env.staging
+secrets.json
+credentials.json
+config.json
+
+# Backup files
+*.bak
+*.backup
+*.orig

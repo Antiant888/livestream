@@ -1,362 +1,369 @@
-# 格隆汇 Live Streaming Analysis System
+# Gelonghui News Scraper
 
-一个用于分析格隆汇直播流数据的完整系统，包括数据抓取、存储、分析和可视化功能。
+A comprehensive web scraping application that fetches real-time news data from the Gelonghui API, stores it in PostgreSQL, and provides a web UI for analysis and visualization.
 
-## 项目概述
+## 🎯 Features
 
-本项目旨在通过分析格隆汇（https://www.gelonghui.com/live?channelId=all）的直播流数据，提取有价值的信息并进行实时分析，包括：
+### Core Functionality
+- **Real-time News Scraping**: Incremental timestamp-based scraping from Gelonghui API
+- **Data Parsing**: Advanced regex-based extraction of hashtags, stocks, and content
+- **Database Storage**: PostgreSQL with SQLAlchemy ORM for persistent storage
+- **Web Dashboard**: Streamlit-based analytics dashboard with real-time visualizations
+- **Scheduled Scraping**: APScheduler for automated periodic data collection
 
-- **实时数据抓取**：从格隆汇网站抓取直播流元数据和聊天内容
-- **话题频率分析**：分析话题标签的出现频率和传播速度
-- **趋势检测**：识别热门话题和趋势
-- **情感分析**：分析用户情感倾向
-- **数据可视化**：通过交互式仪表板展示分析结果
+### Data Analysis
+- **Hashtag Frequency Analysis**: Track trending topics and hashtags
+- **Engagement Metrics**: Analyze read counts, shares, comments, and likes
+- **Stock Mentions**: Monitor stock symbols and market mentions
+- **Time-based Trends**: Visualize data patterns over time
+- **Content Classification**: Categorize news by topics and engagement
 
-## 系统架构
+### Technical Features
+- **Rate Limiting**: Respectful API usage with built-in rate limiting
+- **Error Handling**: Comprehensive error handling and retry mechanisms
+- **Logging**: Detailed logging for monitoring and debugging
+- **Docker Support**: Containerized deployment ready
+- **Railway Deployment**: One-click deployment to Railway.app
 
-```
-┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
-│   前端 Dashboard │ ←→ │   FastAPI 后端   │ ←→ │   PostgreSQL    │
-│   (React + MUI)  │    │   (Python)      │    │   Database      │
-└─────────────────┘    └─────────────────┘    └─────────────────┘
-                                │
-                                ↓
-                       ┌─────────────────┐
-                       │   数据抓取器     │
-                       │   (Playwright)  │
-                       └─────────────────┘
-                                │
-                                ↓
-                       ┌─────────────────┐
-                       │   分析引擎      │
-                       │   (Hashtag     │
-                       │    Analyzer)   │
-                       └─────────────────┘
-```
-
-## 技术栈
-
-### 后端 (Python)
-- **FastAPI**: Web API 框架
-- **SQLAlchemy**: ORM 数据库操作
-- **Playwright**: 浏览器自动化抓取
-- **PostgreSQL**: 主数据库
-- **Celery**: 任务队列（可选）
-- **Loguru**: 日志管理
-
-### 前端 (JavaScript/TypeScript)
-- **React**: 前端框架
-- **TypeScript**: 类型安全
-- **Material-UI**: UI 组件库
-- **Chart.js**: 数据可视化
-- **Vite**: 构建工具
-
-### 数据库
-- **PostgreSQL**: 主数据库
-- **Redis**: 缓存（可选）
-
-## 项目结构
+## 🏗️ Architecture
 
 ```
-glonghui-analysis/
-├── backend/                    # 后端服务
-│   ├── main.py                # FastAPI 应用入口
-│   ├── requirements.txt       # Python 依赖
-│   ├── models/                # 数据模型
-│   │   ├── __init__.py
-│   │   ├── base.py           # 基础模型
-│   │   ├── live_streams.py   # 直播流模型
-│   │   ├── stream_content.py # 内容模型
-│   │   └── hashtags.py       # 话题模型
-│   ├── database/             # 数据库配置
-│   │   ├── __init__.py
-│   │   └── config.py         # 数据库连接
-│   ├── scrapers/             # 抓取器
-│   │   ├── __init__.py
-│   │   ├── base_scraper.py   # 基础抓取器
-│   │   └── glonghui_scraper.py # 格隆汇专用抓取器
-│   └── analysis/             # 分析引擎
-│       ├── __init__.py
-│       └── hashtag_analyzer.py # 话题分析器
-├── frontend/                   # 前端应用
-│   ├── package.json           # 前端依赖
-│   ├── vite.config.ts         # Vite 配置
-│   ├── tsconfig.json          # TypeScript 配置
-│   ├── index.html             # HTML 入口
-│   └── src/                   # 源代码
-│       ├── main.tsx          # 应用入口
-│       ├── App.tsx           # 主应用组件
-│       └── components/       # React 组件
-│           ├── Dashboard.tsx
-│           ├── LiveStreams.tsx
-│           ├── HashtagAnalysis.tsx
-│           ├── TrendingTopics.tsx
-│           └── Navigation.tsx
-├── docs/                      # 文档
-│   └── website_analysis_report.md # 网站分析报告
-└── README.md                  # 项目说明
+┌─────────────────────────────────────────────────────────────────┐
+│                        DEPLOYMENT LAYER                         │
+├─────────────────────────────────────────────────────────────────┤
+│  Railway.app (Multi-service deployment)                         │
+│  ├── Scraper Service (Python)                                   │
+│  ├── Web UI Service (Streamlit)                                 │
+│  ├── PostgreSQL Database                                        │
+│  └── Redis (Optional: Caching)                                  │
+├─────────────────────────────────────────────────────────────────┤
+│                        APPLICATION LAYER                        │
+├─────────────────────────────────────────────────────────────────┤
+│  ├── Scraper Module                                             │
+│  │   ├── API Client (requests)                                  │
+│  │   ├── Data Parser (regex, JSON)                              │
+│  │   ├── Database Writer (SQLAlchemy)                           │
+│  │   └── Scheduler (APScheduler)                                │
+│  ├── Web UI Module                                              │
+│  │   ├── Dashboard (Streamlit)                                  │
+│  │   ├── Data Visualization (Plotly)                            │
+│  │   └── API Endpoints                                          │
+│  └── Analysis Module                                            │
+│      ├── Hashtag Extraction (regex)                             │
+│      ├── Sentiment Analysis (textblob)                          │
+│      └── Trend Analysis (pandas)                                │
+├─────────────────────────────────────────────────────────────────┤
+│                        DATA LAYER                               │
+├─────────────────────────────────────────────────────────────────┤
+│  PostgreSQL Database                                            │
+│  ├── news_items (main table)                                    │
+│  ├── stocks (related stocks)                                    │
+│  ├── hashtags (extracted hashtags)                              │
+│  ├── trends (calculated trends)                                 │
+│  └── engagement_metrics (read, share, comment counts)           │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## 安装和配置
+## 🚀 Quick Start
 
-### 1. 环境要求
+### Prerequisites
 
 - Python 3.9+
-- Node.js 16+
-- PostgreSQL 12+
-- Redis (可选)
+- PostgreSQL database
+- Git
 
-### 2. 后端设置
+### Installation
 
+1. **Clone the repository**
 ```bash
-# 进入后端目录
-cd backend
+git clone <repository-url>
+cd glonghui-news-scraper
+```
 
-# 创建虚拟环境
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# 或 venv\Scripts\activate  # Windows
-
-# 安装依赖
+2. **Install dependencies**
+```bash
 pip install -r requirements.txt
-
-# 安装 Playwright 浏览器
-playwright install
-
-# 设置环境变量
-echo "DATABASE_URL=postgresql://username:password@localhost:5432/glonghui_analysis" > .env
 ```
 
-### 3. 数据库设置
+3. **Set up environment variables**
+```bash
+cp .env.example .env
+# Edit .env with your database URL and other settings
+```
+
+4. **Initialize database**
+```bash
+python main.py setup
+```
+
+5. **Test connections**
+```bash
+python main.py test --api --database
+```
+
+### Running the Application
+
+#### Option 1: Run Scraper (Daemon Mode)
+```bash
+python main.py run --scraper --interval 5
+```
+
+#### Option 2: Run Web Dashboard
+```bash
+python main.py run --dashboard
+```
+
+#### Option 3: Run Both (Separate Terminals)
+```bash
+# Terminal 1: Start scraper
+python main.py run --scraper
+
+# Terminal 2: Start dashboard
+python main.py run --dashboard
+```
+
+### Using Docker
+
+#### Build and Run
+```bash
+# Build the image
+docker build -t glonghui-scraper .
+
+# Run the container
+docker run -p 8501:8501 \
+  -e DATABASE_URL="postgresql://user:password@host:port/db" \
+  glonghui-scraper
+```
+
+#### Docker Compose (Development)
+```bash
+docker-compose up -d
+```
+
+## 📊 Web Dashboard
+
+Access the web dashboard at `http://localhost:8501` to view:
+
+- **Real-time Metrics**: Total news, top hashtags, engagement scores
+- **Hashtag Analysis**: Frequency charts and trending topics
+- **Engagement Analysis**: Top engaged items and metrics breakdown
+- **Stock Analysis**: Stock mentions and market distribution
+- **News Feed**: Latest news with filters and pagination
+
+## 🔧 Configuration
+
+### Environment Variables
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `DATABASE_URL` | PostgreSQL connection URL | `sqlite:///news_data.db` |
+| `SCRAPING_INTERVAL_MINUTES` | Scraping interval | `1` |
+| `LOG_LEVEL` | Logging level | `INFO` |
+| `API_BASE_URL` | Gelonghui API base URL | `https://www.gelonghui.com` |
+| `USER_AGENT` | User agent for API requests | `Mozilla/5.0...` |
+
+### Database Schema
+
+The application creates the following tables:
+
+- **news_items**: Main news content with engagement metrics
+- **stocks**: Related stock information
+- **hashtags**: Extracted hashtags with frequencies
+- **trends**: Calculated trend data
+
+## 📈 Data Analysis Features
+
+### Hashtag Analysis
+- **Frequency Tracking**: Count hashtag occurrences over time
+- **Trend Detection**: Identify trending topics
+- **Time-based Analysis**: Visualize hashtag popularity over time periods
+
+### Engagement Analysis
+- **Engagement Score**: Weighted scoring based on reads, shares, comments, likes
+- **Top Content**: Identify most engaging news items
+- **Engagement Patterns**: Analyze engagement over time
+
+### Stock Analysis
+- **Mention Tracking**: Count stock symbol mentions
+- **Market Distribution**: Analyze mentions by market (SH, SZ, HK, US)
+- **Stock Trends**: Track stock mentions over time
+
+## 🚀 Deployment
+
+### Railway.app Deployment
+
+1. **Create Railway Account**: [railway.app](https://railway.app)
+2. **Deploy from GitHub**: Connect your repository
+3. **Configure Environment**: Set environment variables
+4. **Deploy**: Railway will automatically deploy using `railway.json`
+
+### Docker Deployment
 
 ```bash
-# 创建数据库
-createdb glonghui_analysis
+# Build and push to registry
+docker build -t your-registry/glonghui-scraper:latest .
+docker push your-registry/glonghui-scraper:latest
 
-# 运行数据库初始化（启动应用时自动执行）
-python -c "from database.config import init_db; init_db()"
+# Deploy to your container platform
+kubectl apply -f kubernetes/deployment.yaml
 ```
 
-### 4. 前端设置
+### Heroku Deployment
 
 ```bash
-# 进入前端目录
-cd frontend
+# Install Heroku CLI and login
+heroku login
 
-# 安装依赖
-npm install
+# Create app
+heroku create your-app-name
 
-# 启动开发服务器
-npm run dev
+# Set environment variables
+heroku config:set DATABASE_URL="your-database-url"
+
+# Deploy
+git push heroku main
 ```
 
-### 5. 启动应用
+## 🛠️ Development
+
+### Project Structure
+
+```
+glonghui-news-scraper/
+├── scraper/                    # Core scraping functionality
+│   ├── api_client.py          # Gelonghui API client
+│   ├── data_parser.py         # Data parsing and extraction
+│   ├── database.py            # Database operations
+│   ├── scheduler.py           # Scraping scheduler
+│   └── models/                # SQLAlchemy models
+├── web_ui/                     # Streamlit web interface
+│   ├── app.py                 # Main dashboard application
+│   └── visualizations.py      # Chart generation
+├── tests/                      # Unit tests
+├── scripts/                    # Utility scripts
+├── docs/                       # Documentation
+├── requirements.txt            # Python dependencies
+├── Dockerfile                 # Docker configuration
+├── railway.json               # Railway deployment config
+└── main.py                    # CLI entry point
+```
+
+### Running Tests
 
 ```bash
-# 启动后端 API
-cd backend
-python main.py
+# Run all tests
+pytest
 
-# 在另一个终端启动前端
-cd frontend
-npm run dev
+# Run specific test
+pytest tests/test_api_client.py
+
+# Run with coverage
+pytest --cov=scraper tests/
 ```
 
-## API 接口
-
-### 数据抓取接口
-
-- `POST /api/scrape` - 手动触发真实数据抓取（需要网络访问）
-- `POST /api/scrape/mock` - 手动触发模拟数据生成（推荐用于测试）
-- `POST /api/analyze` - 手动触发数据分析
-
-### 数据查询接口
-
-- `GET /api/streams` - 获取所有直播流
-- `GET /api/streams/{stream_id}/content` - 获取特定直播流内容
-- `GET /api/hashtags/frequency` - 获取话题频率分析
-- `GET /api/trends` - 获取热门话题
-- `GET /api/trends/sentiment` - 获取情感分析
-- `GET /api/stats/realtime` - 获取实时统计
-
-### 模拟数据系统
-
-由于网络访问限制，系统提供了完整的模拟数据生成器：
-
-- **MockScraper**: 生成逼真的模拟直播流数据
-- **话题数据**: 包含中英文财经、科技、投资等热门话题
-- **情感分析**: 模拟用户情感倾向和评论内容
-- **实时更新**: 支持动态数据生成和更新
-
-**使用方法**：
-```bash
-# 生成模拟数据
-curl -X POST http://localhost:8000/api/scrape/mock
-
-# 然后进行分析
-curl -X POST http://localhost:8000/api/analyze
-```
-
-## 功能特性
-
-### 1. 实时数据抓取
-- 自动检测直播流状态变化
-- 抓取聊天消息和评论
-- 提取话题标签和用户提及
-- 基础情感分析
-
-### 2. 话题分析
-- 话题频率统计
-- 话题传播速度计算
-- 跨直播流话题追踪
-- 话题生命周期分析
-
-### 3. 趋势检测
-- 基于频率和速度的趋势评分
-- 信心度计算
-- 趋势预测
-- 历史趋势对比
-
-### 4. 情感分析
-- 正负面情感识别
-- 情感波动性分析
-- 情感趋势追踪
-- 情感分布统计
-
-### 5. 数据可视化
-- 实时仪表板
-- 话题频率图表
-- 趋势热力图
-- 情感分析图表
-- 响应式设计
-
-## 使用说明
-
-### 1. 访问仪表板
-打开浏览器访问 `http://localhost:3000` 查看数据仪表板。
-
-### 2. 监控直播流
-在"直播流"页面查看当前所有直播流的状态和观众数。
-
-### 3. 分析话题趋势
-在"话题分析"和"热门话题"页面查看话题频率和趋势分析。
-
-### 4. 手动触发分析
-可以通过 API 接口或仪表板上的按钮手动触发数据抓取和分析。
-
-## 配置选项
-
-### 抓取器配置
-```python
-# 在 glonghui_scraper.py 中配置
-delay_range = (2, 5)  # 请求间隔（秒）
-```
-
-### 分析器配置
-```python
-# 在 hashtag_analyzer.py 中配置
-time_window = 24      # 分析时间窗口（小时）
-min_frequency = 5     # 最小频率阈值
-min_velocity = 0.5    # 最小速度阈值
-```
-
-### 数据库配置
-```python
-# 在 database/config.py 中配置
-DATABASE_URL = "postgresql://user:pass@host:port/db"
-```
-
-## 部署
-
-### Docker 部署
+### Code Style
 
 ```bash
-# 构建镜像
-docker build -t glonghui-analysis .
+# Format code
+black .
 
-# 运行容器
-docker run -p 8000:8000 glonghui-analysis
+# Check type hints
+mypy scraper/
+
+# Lint code
+flake8 scraper/
 ```
 
-### 生产环境部署
+## 🔍 Monitoring and Maintenance
 
-1. 使用 Gunicorn 或 uWSGI 运行后端
-2. 使用 Nginx 作为反向代理
-3. 配置 PostgreSQL 生产环境
-4. 设置定时任务进行定期抓取
+### Health Checks
 
-## 监控和维护
+The application provides health check endpoints:
+- Scraper: `/health`
+- Web UI: `/_stcore/health`
 
-### 日志监控
-- 使用 Loguru 记录详细日志
-- 监控抓取成功率
-- 跟踪分析性能
+### Logging
 
-### 性能优化
-- 数据库索引优化
-- 缓存策略实施
-- 异步处理优化
+Logs are written to:
+- File: `scraper.log`
+- Console: Standard output
 
-### 数据备份
-- 定期备份 PostgreSQL 数据
-- 实施数据恢复策略
+### Database Maintenance
 
-## 法律和伦理考虑
+```bash
+# Clean up old data (keep 30 days)
+python main.py cleanup --days 30
 
-### 合规性
-- 遵守目标网站的使用条款
-- 尊重 robots.txt 规则
-- 实施合理的请求频率限制
+# Show system status
+python main.py status
+```
 
-### 数据隐私
-- 不存储敏感个人信息
-- 匿名化处理用户数据
-- 遵守数据保护法规
+## 📋 API Reference
 
-## 故障排除
+### Gelonghui API Endpoints
 
-### 常见问题
+- **Live News**: `GET /api/live-channels/all/lives/v4`
+  - Parameters: `category`, `limit`, `timestamp`
+  - Returns: JSON with news items
 
-1. **抓取失败**
-   - 检查网络连接
-   - 验证目标网站是否可访问
-   - 调整请求延迟
+### Internal API
 
-2. **数据库连接错误**
-   - 检查 PostgreSQL 服务状态
-   - 验证连接字符串
-   - 确认数据库权限
+The scraper provides internal endpoints for monitoring:
+- **Health Check**: `GET /health`
+- **Status**: `GET /status`
 
-3. **前端无法访问后端**
-   - 检查 CORS 配置
-   - 验证代理设置
-   - 确认端口开放
+## 🤝 Contributing
 
-### 调试工具
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests for your changes
+5. Run tests and ensure they pass
+6. Submit a pull request
 
-- 使用浏览器开发者工具监控网络请求
-- 查看后端日志文件
-- 使用数据库客户端检查数据
+## 📄 License
 
-## 贡献指南
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-1. Fork 项目
-2. 创建功能分支
-3. 提交更改
-4. 创建 Pull Request
+## 🆘 Troubleshooting
 
-## 许可证
+### Common Issues
 
-MIT License
+1. **Database Connection Failed**
+   - Check `DATABASE_URL` environment variable
+   - Ensure PostgreSQL is running
+   - Verify credentials
 
-## 联系方式
+2. **API Rate Limiting**
+   - Increase scraping interval
+   - Check API status
+   - Review rate limiting settings
 
-如有问题或建议，请通过 GitHub Issues 联系。
+3. **Docker Issues**
+   - Ensure Docker is installed and running
+   - Check port availability
+   - Verify environment variables
 
-## 更新日志
+### Getting Help
 
-### v1.0.0 (2026-03-16)
-- 初始版本发布
-- 完整的数据抓取和分析功能
-- 响应式 Web 仪表板
-- PostgreSQL 数据库集成
+- Check the [Troubleshooting Guide](docs/TROUBLESHOOTING.md)
+- Review logs in `scraper.log`
+- Create an issue on GitHub
+
+## 📞 Support
+
+For support and questions:
+- Create a GitHub issue
+- Check the documentation in `/docs`
+- Review the troubleshooting guide
+
+## 🙏 Acknowledgments
+
+- Gelonghui for providing the news API
+- SQLAlchemy team for the excellent ORM
+- Streamlit team for the fantastic dashboard framework
+- APScheduler team for reliable scheduling
+
+---
+
+**Note**: This application is designed for educational and analytical purposes. Please respect the Gelonghui API terms of service and rate limits.
