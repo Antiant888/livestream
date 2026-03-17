@@ -30,6 +30,9 @@ RUN apt-get update && apt-get install -y \
 # Copy Python dependencies from builder stage
 COPY --from=builder /root/.local /root/.local
 
+# Fix permissions for .local/bin executables
+RUN chmod +x /root/.local/bin/*
+
 # Copy application code
 COPY . .
 
